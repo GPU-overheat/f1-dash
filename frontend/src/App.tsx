@@ -1,9 +1,16 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function RaceResults() {
-  const [results, setResults] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+type DriverResult = {
+  DriverNumber: string;
+  Position: number;
+  FullName: string;
+  TeamName: string;
+};
+
+const RaceResults: React.FC = () => {
+  const [results, setResults] = useState<DriverResult[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRaceData = async () => {
@@ -17,7 +24,11 @@ function RaceResults() {
         const data = await response.json();
         setResults(data);
       } catch (e) {
-        setError(e.message);
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError('An unknown error occurred.');
+        }
       } finally {
         setLoading(false);
       }
@@ -25,7 +36,6 @@ function RaceResults() {
 
     fetchRaceData();
   }, []);
-
 
   if (loading) {
     return <div>Loading race results...</div>;
@@ -47,7 +57,7 @@ function RaceResults() {
           </tr>
         </thead>
         <tbody>
-          {results && results.map((driver) => (
+          {results && results.map((driver: DriverResult) => (
             <tr key={driver.DriverNumber}>
               <td>{driver.Position}</td>
               <td>{driver.FullName}</td>

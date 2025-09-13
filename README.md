@@ -1,1 +1,1 @@
-init this repo when solid work is done
+solve ts type error. and start working on the real shit
