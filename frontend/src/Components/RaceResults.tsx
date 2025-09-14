@@ -60,7 +60,7 @@ const RaceResults: React.FC<RaceResultsProps> = ({year, round, rType}) => {
   },);
 
   if (loading) {
-    return <div>Loading race results...</div>;
+    return <div className={styles.wholediv}>Loading race results...</div>;
   }
 
   if (error) {
