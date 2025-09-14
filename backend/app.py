@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 import fastf1
 import os
+import json
 
 app = Flask(__name__)
 CORS(app) 
@@ -10,12 +11,24 @@ if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 fastf1.Cache.enable_cache(cache_dir)
 
-@app.route('/api/session/<int:year>/<string:event>/<string:session_type>')
+@app.route('/api/session/<int:year>/<event>/<string:session_type>')
 def get_session_data(year, event, session_type):
     try:
         session = fastf1.get_session(year, event, session_type)
         session.load(laps=True, telemetry=False, weather=False)
-        results = session.results.to_json(orient='records')
-        return results
+        event_name = session.event['EventName']
+        event_date = session.event['EventDate'].strftime('%d/%m/%Y')
+
+        results_list = json.loads(session.results.to_json(orient='records'))
+
+        response_data = {
+            "eventName": event_name,
+            "eventDate": event_date,
+            "results": results_list
+        }
+        
+        return jsonify(response_data)
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 404
+    
