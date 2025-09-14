@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from "react";
 
 const styles = {
-	"wholediv": "flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4 text-gray-200",
-	"titlediv": "mb-8 text-4xl font-bold tracking-wider text-white",
-	"secdiv": "w-full max-w-4xl overflow-hidden rounded-lg shadow-lg",
-	"headerstyle": "p-3 text-left text-sm font-semibold uppercase tracking-wider"
-
-
-}
-
-type RaceResultsProps = {
-  year: number;
-  round: number | string;
-  rType: string;
+  wholediv: "flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4 text-gray-200",
+  titlediv: "mb-8 text-4xl font-bold tracking-wider text-white",
+  secdiv: "w-full max-w-5xl overflow-hidden rounded-lg shadow-lg",
+  headerstyle: "p-3 text-left text-sm font-semibold uppercase tracking-wider",
 };
 
 type DriverResult = {
@@ -21,6 +13,8 @@ type DriverResult = {
   FullName: string;
   TeamName: string;
   TeamColor: string;
+  Time: string | null;
+  Status: string;
 };
 
 type SessionData = {
@@ -29,20 +23,47 @@ type SessionData = {
   results: DriverResult[];
 };
 
-const RaceResults: React.FC<RaceResultsProps> = ({year, round, rType}) => {
+type RaceResultsProps = {
+  year: number;
+  round: number | string;
+  rType: string;
+};
+
+const formatTime = (timeString: string | null, position: number): string => {
+  if (typeof timeString !== 'string') {
+    return "-";
+  }
+
+  const match = timeString.match(/(\d{2}):(\d{2}):(\d{2})\.(\d+)/);
+  if (!match) return "-";
+
+  const [, hours, minutes, seconds] = match;
+
+  if (position === 1) {
+    return `${hours}:${minutes}:${seconds}`;
+  } else {
+    if (hours === "00" && minutes === "00") {
+      return `+${seconds}.${match[4].substring(0, 3)}s`;
+    }
+    return `+${minutes}:${seconds}.${match[4].substring(0, 3)}`;
+  }
+};
+
+const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
   const [results, setResults] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRaceData = async () => {
+      setLoading(true);
+      setError(null);
+      
       try {
         const response = await fetch(`/api/session/${year}/${round}/${rType}`);
-
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
         const data = await response.json();
         setResults(data);
       } catch (e) {
@@ -57,14 +78,14 @@ const RaceResults: React.FC<RaceResultsProps> = ({year, round, rType}) => {
     };
 
     fetchRaceData();
-  },);
+  }, [year, round, rType]);
 
   if (loading) {
     return <div className={styles.wholediv}>Loading race results...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className={styles.wholediv}>Error: {error}</div>;
   }
 
   return (
@@ -76,15 +97,11 @@ const RaceResults: React.FC<RaceResultsProps> = ({year, round, rType}) => {
         <table className="w-full border-collapse">
           <thead className="bg-gray-800">
             <tr>
-              <th className={styles.headerstyle}>
-                Pos
-              </th>
-              <th className={styles.headerstyle}>
-                Driver
-              </th>
-              <th className={styles.headerstyle}>
-                Team
-              </th>
+              <th className={styles.headerstyle}>Pos</th>
+              <th className={styles.headerstyle}>Driver</th>
+              <th className={styles.headerstyle}>Team</th>
+              <th className={styles.headerstyle}>Time</th>
+              <th className={`${styles.headerstyle} text-center`}>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -95,11 +112,15 @@ const RaceResults: React.FC<RaceResultsProps> = ({year, round, rType}) => {
                   className="border-b border-gray-700 bg-gray-800/50 transition-colors hover:bg-gray-700/50"
                   style={{ borderLeft: `4px solid #${driver.TeamColor}` }}
                 >
-                  <td className="p-3 font-mono text-center">
-                    {driver.Position}
-                  </td>
+                  <td className="p-3 font-mono text-center">{driver.Position}</td>
                   <td className="p-3 font-bold">{driver.FullName}</td>
                   <td className="p-3 text-gray-400">{driver.TeamName}</td>
+                  <td className="p-3 font-mono">
+                    {formatTime(driver.Time, driver.Position)}
+                  </td>
+                  <td className="p-3 text-center text-xl">
+                    {driver.Status === 'Finished' ? '🏁' : '❌'}
+                  </td>
                 </tr>
               ))}
           </tbody>
