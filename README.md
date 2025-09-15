@@ -14,3 +14,4 @@
 - Fixed components screen spacing.
 - Added a little footer.
 - Added a smol home page.
+- Added anotehr smol update to the search query.
