@@ -14,7 +14,6 @@ type DriverResult = {
   TeamName: string;
   TeamColor: string;
   Time: string | null;
-  Status: string;
 };
 
 type SessionData = {
@@ -62,7 +61,7 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
       try {
         const response = await fetch(`/api/session/${year}/${round}/${rType}`);
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTP status ${response.status}`);
         }
         const data = await response.json();
         setResults(data);
@@ -81,11 +80,22 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
   }, [year, round, rType]);
 
   if (loading) {
-    return <div className={styles.wholediv}>Loading race results...</div>;
+    return <div className=''>Loading race results...</div>;
   }
 
   if (error) {
-    return <div className={styles.wholediv}>Error: {error}</div>;
+    return <div className=''>Error: {error}</div>;
+  }
+  if (results && results.results.length === 0) {
+      return (
+      <div>
+        <h1 className={styles.titlediv}>{results.eventName}</h1>
+        <div className="text-center">
+            <p className="text-2xl text-gray-300">Race didn't happen yet.</p>
+            <p className="mt-2 text-lg text-gray-500">This event is scheduled for {results.eventDate}.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -101,7 +111,6 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
               <th className={styles.headerstyle}>Driver</th>
               <th className={styles.headerstyle}>Team</th>
               <th className={styles.headerstyle}>Time</th>
-              <th className={`${styles.headerstyle} text-center`}>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -117,9 +126,6 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
                   <td className="p-3 text-gray-400">{driver.TeamName}</td>
                   <td className="p-3 font-mono">
                     {formatTime(driver.Time, driver.Position)}
-                  </td>
-                  <td className="p-3 text-center text-xl">
-                    {driver.Status === 'Finished' ? '🏁' : '❌'}
                   </td>
                 </tr>
               ))}

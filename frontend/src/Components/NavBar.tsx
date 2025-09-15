@@ -20,7 +20,7 @@ const NavBar = () => {
               to="/"
               className={({ isActive }) => (isActive ? activeLinkClasses : linkClasses)}
             >
-              Latest Results
+              Home
             </NavLink>
             <NavLink
               to="/search"
