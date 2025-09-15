@@ -1,32 +1,14 @@
 import React, { useState, useEffect } from "react";
+import type { DriverResult, SessionData, RaceResultsProps } from "../types";
 
 const styles = {
-  wholediv: "flex flex-col items-center justify-center min-h-screen bg-gray-900 p-4 text-gray-200",
+  wholediv: "flex flex-col items-center justify-center min-h-screen min-w-screen bg-gray-900 p-4 text-gray-200",
   titlediv: "mb-8 text-4xl font-bold tracking-wider text-white",
   secdiv: "w-full max-w-5xl overflow-hidden rounded-lg shadow-lg",
   headerstyle: "p-3 text-left text-sm font-semibold uppercase tracking-wider",
 };
 
-type DriverResult = {
-  DriverNumber: string;
-  Position: number;
-  FullName: string;
-  TeamName: string;
-  TeamColor: string;
-  Time: string | null;
-};
 
-type SessionData = {
-  eventName: string;
-  eventDate: string;
-  results: DriverResult[];
-};
-
-type RaceResultsProps = {
-  year: number;
-  round: number | string;
-  rType: string;
-};
 
 const formatTime = (timeString: string | null, position: number): string => {
   if (typeof timeString !== 'string') {

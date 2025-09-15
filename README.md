@@ -32,3 +32,4 @@ Every contribution is appreciated. If you like the project, don't forget to give
 - Added a smol home page.
 - Added anotehr smol update to the search query.
 - Generated requirements file for backend.
+- Moved types to a seperate file.

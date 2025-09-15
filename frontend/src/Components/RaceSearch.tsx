@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import RaceResults from './RaceResults';
+import type { SearchParams } from '../types';
 
 const MIN_YEAR = 2018;
 const CURRENT_YEAR = new Date().getFullYear();
-
-
-type SearchParams = {
-  year: number;
-  round: string | number ;
-  rType: string;
-};
 
 const RaceSearch = () => {
   const [year, setYear] = useState<number>(2025);
