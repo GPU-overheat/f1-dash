@@ -33,3 +33,7 @@ Every contribution is appreciated. If you like the project, don't forget to give
 - Added anotehr smol update to the search query.
 - Generated requirements file for backend.
 - Moved types to a seperate file.
+
+*16/9/2025*
+- Making ready for production. 
+- FEATURES ARE FOR LATER. XD

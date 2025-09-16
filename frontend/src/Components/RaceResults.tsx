@@ -41,7 +41,8 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
       setError(null);
       
       try {
-        const response = await fetch(`/api/session/${year}/${round}/${rType}`);
+        // const response = await fetch(`/api/session/${year}/${round}/${rType}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/session/${year}/${round}/${rType}`);
         if (!response.ok) {
           throw new Error(`HTTP status ${response.status}`);
         }
