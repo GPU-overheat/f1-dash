@@ -126,6 +126,3 @@ const RaceResults: React.FC<RaceResultsProps> = ({ year, round, rType }) => {
 };
 
 export default RaceResults;
-
-// you might need this pieace later
-// const response = await fetch(`/api/session/${year}/${round}/${rType}`);

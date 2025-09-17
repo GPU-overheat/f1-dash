@@ -6,8 +6,10 @@ import json
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
-# CORS(app, resources={r"/api/*": {"origins": "https://f1-dash-yourname.vercel.app"}})
+# allow other origins on prod
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+
+
 cache_dir = os.path.expanduser('~/fastf1_cache')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
