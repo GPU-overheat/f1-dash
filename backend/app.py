@@ -4,16 +4,28 @@ import fastf1
 import os
 import json
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-# allow other origins on prod
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+
+
+allowed_origin = os.getenv('CORS_ORIGIN')
+
+
+CORS(app, resources={r"/api/*": {"origins": allowed_origin}})
 
 
 cache_dir = os.path.expanduser('~/fastf1_cache')
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 fastf1.Cache.enable_cache(cache_dir)
+
+@app.route('/api')
+def healthCheck():
+    return 'Test successful'
+
 
 @app.route('/api/session/<int:year>/<event>/<string:session_type>')
 def get_session_data(year, event, session_type):
