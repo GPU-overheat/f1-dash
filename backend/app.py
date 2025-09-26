@@ -14,8 +14,8 @@ app = Flask(__name__)
 allowed_origin = os.getenv('CORS_ORIGIN')
 
 
-CORS(app, resources={r"/api/*": {"origins": allowed_origin}})
-
+# CORS(app, resources={r"/api/*": {"origins": allowed_origin}})
+CORS(app)
 
 cache_dir = os.path.expanduser('~/fastf1_cache')
 if not os.path.exists(cache_dir):
@@ -30,18 +30,17 @@ def healthCheck():
 @app.route('/api/session/<int:year>/<event>/<string:session_type>')
 def get_session_data(year, event, session_type):
     try:
-        fastf1.Cache.clear_cache()
+        
         event_identifier = int(event) if event.isdigit() else event
         
         session = fastf1.get_session(year, event_identifier, session_type)
-        session.load(laps=True, telemetry=False, weather=False)
+        session.load()
         
         event_name = session.event['EventName']
         event_date = session.event['EventDate'].strftime('%d-%m-%Y')
 
-
         results_df = session.results.copy()
-
+        
         results_df['Time'] = results_df['Time'].astype(str)
         results_df.loc[results_df['Time'] == 'NaT', 'Time'] = None
 
@@ -54,7 +53,8 @@ def get_session_data(year, event, session_type):
             'Time', 
         ]
         results_df = results_df[required_columns]
-        results_list = json.loads(results_df.to_json(orient='records'))
+        
+        results_list = results_df.to_dict(orient='records')
 
         response_data = {
             "eventName": event_name,

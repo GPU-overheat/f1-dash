@@ -14,6 +14,12 @@ Here are a few ways you can get involved:
 Every contribution is appreciated. If you like the project, don't forget to give it a ⭐!
 
 
+You can check the frontend at [f1-dash](https://f1-dash-kappa.vercel.app/search), tho the backend is not hosted anywhere therefore it is down. For now if you want to the full functionning app clone this repo, and run it locally.
+
+Dont forget to make a .env file in the frontend
+```VITE_API_URL=your back end url```
+
+
 ## Logs 📦
 
 *13/9/2025*
